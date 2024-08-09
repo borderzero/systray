@@ -20,3 +20,6 @@ void remove_menu_item(int menuId);
 void show_menu_item(int menuId);
 void reset_menu();
 void quit();
+
+// New function to add a toggle switch to the menu
+void add_toggle_menu_item(int menuId, int parentMenuId, char* primaryText, char* secondaryText, bool switchState, bool secondaryTextDisabled);

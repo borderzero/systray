@@ -10,6 +10,7 @@ package systray
 #include "systray.h"
 
 void setInternalLoop(bool);
+void add_toggle_menu_item(int menuId, int parentMenuId, char* primaryText, char* secondaryText, bool switchState, bool secondaryTextDisabled);
 */
 import "C"
 
@@ -40,6 +41,29 @@ func (item *MenuItem) SetIcon(iconBytes []byte) {
 func (item *MenuItem) SetTemplateIcon(templateIconBytes []byte, regularIconBytes []byte) {
 	cstr := (*C.char)(unsafe.Pointer(&templateIconBytes[0]))
 	C.setMenuItemIcon(cstr, (C.int)(len(templateIconBytes)), C.int(item.id), true)
+}
+
+// AddToggleMenuItem adds a toggle switch menu item with the specified parameters.
+func (item *MenuItem) AddToggleMenuItem(primaryText, secondaryText string, switchState, secondaryTextDisabled bool) {
+	cPrimaryText := C.CString(primaryText)
+	defer C.free(unsafe.Pointer(cPrimaryText))
+
+	cSecondaryText := C.CString(secondaryText)
+	defer C.free(unsafe.Pointer(cSecondaryText))
+
+	var parentID uint32 = 0
+	if item.parent != nil {
+		parentID = item.parent.id
+	}
+
+	C.add_toggle_menu_item(
+		C.int(item.id),
+		C.int(parentID),
+		cPrimaryText,
+		cSecondaryText,
+		C.bool(switchState),
+		C.bool(secondaryTextDisabled),
+	)
 }
 
 func registerSystray() {

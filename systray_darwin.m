@@ -370,3 +370,67 @@ void reset_menu() {
 void quit() {
   runInMainThread(@selector(quit), nil);
 }
+
+@interface ToggleMenuItem : NSView
+@property (strong, nonatomic) NSSwitch *toggleSwitch;
+@property (strong, nonatomic) NSTextField *label;
+@property (strong, nonatomic) NSTextField *secondaryLabel;
+
+- (instancetype)initWithPrimaryText:(NSString *)primaryText
+                      secondaryText:(NSString *)secondaryText
+                        switchState:(BOOL)isOn
+              secondaryTextDisabled:(BOOL)disabled;
+@end
+
+@implementation ToggleMenuItem
+
+- (instancetype)initWithPrimaryText:(NSString *)primaryText
+                      secondaryText:(NSString *)secondaryText
+                        switchState:(BOOL)isOn
+              secondaryTextDisabled:(BOOL)disabled {
+
+    self = [super initWithFrame:NSMakeRect(0, 0, 200, 40)];
+    if (self) {
+        _toggleSwitch = [[NSSwitch alloc] initWithFrame:NSMakeRect(150, 10, 40, 20)];
+        _toggleSwitch.state = isOn ? NSControlStateValueOn : NSControlStateValueOff;
+        [self addSubview:_toggleSwitch];
+
+        _label = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 10, 140, 20)];
+        _label.stringValue = primaryText;
+        _label.bezeled = NO;
+        _label.drawsBackground = NO;
+        _label.editable = NO;
+        _label.selectable = NO;
+        [self addSubview:_label];
+
+        _secondaryLabel = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 140, 20)];
+        _secondaryLabel.stringValue = secondaryText;
+        _secondaryLabel.textColor = disabled ? [NSColor lightGrayColor] : [NSColor textColor];
+        _secondaryLabel.bezeled = NO;
+        _secondaryLabel.drawsBackground = NO;
+        _secondaryLabel.editable = NO;
+        _secondaryLabel.selectable = NO;
+        [self addSubview:_secondaryLabel];
+    }
+    return self;
+}
+
+@end
+
+- (void)addToggleMenuItemWithPrimaryText:(NSString *)primaryText
+                          secondaryText:(NSString *)secondaryText
+                             switchState:(BOOL)isOn
+                   secondaryTextDisabled:(BOOL)disabled
+                                  menuId:(NSNumber *)menuId
+                             parentMenuId:(NSNumber *)parentMenuId {
+
+    ToggleMenuItem *toggleView = [[ToggleMenuItem alloc] initWithPrimaryText:primaryText
+                                                                secondaryText:secondaryText
+                                                                  switchState:isOn
+                                                         secondaryTextDisabled:disabled];
+
+    NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
+    menuItem.view = toggleView;
+    [self add_or_update_menu_item:[[MenuItem alloc] initWithId:menuId.intValue withParentMenuId:parentMenuId.intValue withTitle:[primaryText UTF8String] withTooltip:"" withDisabled:0 withChecked:0]];
+    [menu addItem:menuItem];
+}
