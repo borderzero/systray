@@ -6,6 +6,7 @@ package systray
 #cgo darwin CFLAGS: -DDARWIN -x objective-c -fobjc-arc
 #cgo darwin LDFLAGS: -framework Cocoa
 
+#include <stdlib.h>
 #include <stdbool.h>
 #include "systray.h"
 
