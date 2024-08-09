@@ -186,3 +186,21 @@ func systray_menu_will_open() {
 	default:
 	}
 }
+
+// AddToggleMenuItem adds a toggle switch menu item with the specified parameters.
+func AddToggleMenuItem(id uint32, parentID uint32, primaryText, secondaryText string, switchState, secondaryTextDisabled bool) {
+	cPrimaryText := C.CString(primaryText)
+	defer C.free(unsafe.Pointer(cPrimaryText))
+
+	cSecondaryText := C.CString(secondaryText)
+	defer C.free(unsafe.Pointer(cSecondaryText))
+
+	C.add_toggle_menu_item(
+		C.int(id),
+		C.int(parentID),
+		cPrimaryText,
+		cSecondaryText,
+		C.bool(switchState),
+		C.bool(secondaryTextDisabled),
+	)
+}
